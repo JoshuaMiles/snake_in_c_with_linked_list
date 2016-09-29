@@ -1,0 +1,419 @@
+   1               		.file	"ram_utils.c"
+   2               	__SP_H__ = 0x3e
+   3               	__SP_L__ = 0x3d
+   4               	__SREG__ = 0x3f
+   5               	__tmp_reg__ = 0
+   6               	__zero_reg__ = 1
+   7               		.text
+   8               	.Ltext0:
+   9               		.cfi_sections	.debug_frame
+  10               		.section	.text.estimate_alloc,"ax",@progbits
+  11               	.global	estimate_alloc
+  13               	estimate_alloc:
+  14               	.LFB5:
+  15               		.file 1 "ram_utils.c"
+   1:ram_utils.c   **** /*
+   2:ram_utils.c   ****  *  CAB202 Teensy Library (cab202_teensy)
+   3:ram_utils.c   ****  *	ram_utils.c
+   4:ram_utils.c   ****  *
+   5:ram_utils.c   ****  *	J.Luck, May 2015
+   6:ram_utils.c   ****  *	Queensland University of Technology
+   7:ram_utils.c   ****  */
+   8:ram_utils.c   **** #include "ram_utils.h"
+   9:ram_utils.c   **** 
+  10:ram_utils.c   **** int estimate_alloc(int len){
+  16               		.loc 1 10 0
+  17               		.cfi_startproc
+  18               	.LVL0:
+  19 0000 CF93      		push r28
+  20               	.LCFI0:
+  21               		.cfi_def_cfa_offset 3
+  22               		.cfi_offset 28, -2
+  23 0002 DF93      		push r29
+  24               	.LCFI1:
+  25               		.cfi_def_cfa_offset 4
+  26               		.cfi_offset 29, -3
+  27 0004 00D0      		rcall .
+  28               	.LCFI2:
+  29               		.cfi_def_cfa_offset 6
+  30 0006 CDB7      		in r28,__SP_L__
+  31 0008 DEB7      		in r29,__SP_H__
+  32               	.LCFI3:
+  33               		.cfi_def_cfa_register 28
+  34               	/* prologue: function */
+  35               	/* frame size = 2 */
+  36               	/* stack size = 4 */
+  37               	.L__stack_usage = 4
+  11:ram_utils.c   **** 	extern int __heap_start, *__brkval;
+  12:ram_utils.c   **** 	int v;
+  13:ram_utils.c   **** 	return (int) (&v - (__brkval == 0 ? (int) &__heap_start : (int) __brkval) - len);
+  38               		.loc 1 13 0
+  39 000a 2091 0000 		lds r18,__brkval
+  40 000e 3091 0000 		lds r19,__brkval+1
+  41 0012 2115      		cp r18,__zero_reg__
+  42 0014 3105      		cpc r19,__zero_reg__
+  43 0016 01F4      		brne .L4
+  44               		.loc 1 13 0 is_stmt 0 discriminator 2
+  45 0018 20E0      		ldi r18,lo8(__heap_start)
+  46 001a 30E0      		ldi r19,hi8(__heap_start)
+  47               	.L4:
+  48 001c 220F      		lsl r18
+  49 001e 331F      		rol r19
+  50 0020 3195      		neg r19
+  51 0022 2195      		neg r18
+  52 0024 3109      		sbc r19,__zero_reg__
+  53 0026 880F      		lsl r24
+  54 0028 991F      		rol r25
+  55               	.LVL1:
+  56 002a A901      		movw r20,r18
+  57 002c 481B      		sub r20,r24
+  58 002e 590B      		sbc r21,r25
+  59 0030 CA01      		movw r24,r20
+  14:ram_utils.c   **** }
+  60               		.loc 1 14 0 is_stmt 1 discriminator 2
+  61 0032 21E0      		ldi r18,lo8(1)
+  62 0034 30E0      		ldi r19,0
+  63 0036 2C0F      		add r18,r28
+  64 0038 3D1F      		adc r19,r29
+  65 003a 820F      		add r24,r18
+  66 003c 931F      		adc r25,r19
+  67               	/* epilogue start */
+  68 003e 0F90      		pop __tmp_reg__
+  69 0040 0F90      		pop __tmp_reg__
+  70 0042 DF91      		pop r29
+  71 0044 CF91      		pop r28
+  72 0046 0895      		ret
+  73               		.cfi_endproc
+  74               	.LFE5:
+  76               		.section	.text.estimate_ram,"ax",@progbits
+  77               	.global	estimate_ram
+  79               	estimate_ram:
+  80               	.LFB6:
+  15:ram_utils.c   **** 
+  16:ram_utils.c   **** int estimate_ram(void){
+  81               		.loc 1 16 0
+  82               		.cfi_startproc
+  83 0000 CF93      		push r28
+  84               	.LCFI4:
+  85               		.cfi_def_cfa_offset 3
+  86               		.cfi_offset 28, -2
+  87 0002 DF93      		push r29
+  88               	.LCFI5:
+  89               		.cfi_def_cfa_offset 4
+  90               		.cfi_offset 29, -3
+  91 0004 00D0      		rcall .
+  92               	.LCFI6:
+  93               		.cfi_def_cfa_offset 6
+  94 0006 CDB7      		in r28,__SP_L__
+  95 0008 DEB7      		in r29,__SP_H__
+  96               	.LCFI7:
+  97               		.cfi_def_cfa_register 28
+  98               	/* prologue: function */
+  99               	/* frame size = 2 */
+ 100               	/* stack size = 4 */
+ 101               	.L__stack_usage = 4
+  17:ram_utils.c   ****   extern int __heap_start, *__brkval;
+  18:ram_utils.c   ****   int v;
+  19:ram_utils.c   ****   return (int) (&v - (__brkval == 0 ? (int) &__heap_start : (int) __brkval));
+ 102               		.loc 1 19 0
+ 103 000a 8091 0000 		lds r24,__brkval
+ 104 000e 9091 0000 		lds r25,__brkval+1
+ 105 0012 0097      		sbiw r24,0
+ 106 0014 01F4      		brne .L9
+ 107               		.loc 1 19 0 is_stmt 0 discriminator 2
+ 108 0016 80E0      		ldi r24,lo8(__heap_start)
+ 109 0018 90E0      		ldi r25,hi8(__heap_start)
+ 110               	.L9:
+ 111 001a 880F      		lsl r24
+ 112 001c 991F      		rol r25
+ 113 001e 9195      		neg r25
+ 114 0020 8195      		neg r24
+ 115 0022 9109      		sbc r25,__zero_reg__
+  20:ram_utils.c   **** }
+ 116               		.loc 1 20 0 is_stmt 1 discriminator 2
+ 117 0024 21E0      		ldi r18,lo8(1)
+ 118 0026 30E0      		ldi r19,0
+ 119 0028 2C0F      		add r18,r28
+ 120 002a 3D1F      		adc r19,r29
+ 121 002c 820F      		add r24,r18
+ 122 002e 931F      		adc r25,r19
+ 123               	/* epilogue start */
+ 124 0030 0F90      		pop __tmp_reg__
+ 125 0032 0F90      		pop __tmp_reg__
+ 126 0034 DF91      		pop r29
+ 127 0036 CF91      		pop r28
+ 128 0038 0895      		ret
+ 129               		.cfi_endproc
+ 130               	.LFE6:
+ 132               		.section	.text.load_rom_bitmap,"ax",@progbits
+ 133               	.global	load_rom_bitmap
+ 135               	load_rom_bitmap:
+ 136               	.LFB7:
+  21:ram_utils.c   **** 
+  22:ram_utils.c   **** unsigned char* load_rom_bitmap(const unsigned char* source, int len){
+ 137               		.loc 1 22 0
+ 138               		.cfi_startproc
+ 139               	.LVL2:
+ 140 0000 0F93      		push r16
+ 141               	.LCFI8:
+ 142               		.cfi_def_cfa_offset 3
+ 143               		.cfi_offset 16, -2
+ 144 0002 1F93      		push r17
+ 145               	.LCFI9:
+ 146               		.cfi_def_cfa_offset 4
+ 147               		.cfi_offset 17, -3
+ 148 0004 CF93      		push r28
+ 149               	.LCFI10:
+ 150               		.cfi_def_cfa_offset 5
+ 151               		.cfi_offset 28, -4
+ 152 0006 DF93      		push r29
+ 153               	.LCFI11:
+ 154               		.cfi_def_cfa_offset 6
+ 155               		.cfi_offset 29, -5
+ 156               	/* prologue: function */
+ 157               	/* frame size = 0 */
+ 158               	/* stack size = 4 */
+ 159               	.L__stack_usage = 4
+ 160 0008 8C01      		movw r16,r24
+ 161 000a EB01      		movw r28,r22
+  23:ram_utils.c   **** 
+  24:ram_utils.c   **** 	/* allocate memory */
+  25:ram_utils.c   **** 	unsigned char* heap_alloc = (unsigned char*)malloc(len);
+ 162               		.loc 1 25 0
+ 163 000c CB01      		movw r24,r22
+ 164               	.LVL3:
+ 165 000e 0E94 0000 		call malloc
+ 166               	.LVL4:
+ 167 0012 9C01      		movw r18,r24
+ 168               	.LVL5:
+  26:ram_utils.c   **** 
+  27:ram_utils.c   **** 	/* check we have heap space allocated */
+  28:ram_utils.c   **** 	if(heap_alloc == NULL)
+ 169               		.loc 1 28 0
+ 170 0014 0097      		sbiw r24,0
+ 171 0016 01F0      		breq .L14
+ 172 0018 DC01      		movw r26,r24
+ 173 001a 40E0      		ldi r20,0
+ 174 001c 50E0      		ldi r21,0
+ 175               	.L12:
+ 176               	.LVL6:
+ 177               	.LBB2:
+  29:ram_utils.c   **** 		return NULL;
+  30:ram_utils.c   **** 
+  31:ram_utils.c   **** 	/* copy bytes over */
+  32:ram_utils.c   **** 	for(int i=0;i<len;i++)
+ 178               		.loc 1 32 0 discriminator 1
+ 179 001e 4C17      		cp r20,r28
+ 180 0020 5D07      		cpc r21,r29
+ 181 0022 04F4      		brge .L15
+ 182               	.LVL7:
+ 183 0024 F801      		movw r30,r16
+ 184 0026 E40F      		add r30,r20
+ 185 0028 F51F      		adc r31,r21
+ 186               	.LVL8:
+ 187               	.LBB3:
+  33:ram_utils.c   **** 		heap_alloc[i] = pgm_read_byte(&((source[i])));
+ 188               		.loc 1 33 0 discriminator 3
+ 189               	/* #APP */
+ 190               	 ;  33 "ram_utils.c" 1
+ 191 002a E491      		lpm r30, Z
+ 192               		
+ 193               	 ;  0 "" 2
+ 194               	.LVL9:
+ 195               	/* #NOAPP */
+ 196               	.LBE3:
+ 197 002c ED93      		st X+,r30
+  32:ram_utils.c   **** 		heap_alloc[i] = pgm_read_byte(&((source[i])));
+ 198               		.loc 1 32 0 discriminator 3
+ 199 002e 4F5F      		subi r20,-1
+ 200 0030 5F4F      		sbci r21,-1
+ 201               	.LVL10:
+ 202 0032 00C0      		rjmp .L12
+ 203               	.LVL11:
+ 204               	.L15:
+ 205 0034 C901      		movw r24,r18
+ 206 0036 00C0      		rjmp .L11
+ 207               	.LVL12:
+ 208               	.L14:
+ 209               	.LBE2:
+  29:ram_utils.c   **** 		return NULL;
+ 210               		.loc 1 29 0
+ 211 0038 80E0      		ldi r24,0
+ 212 003a 90E0      		ldi r25,0
+ 213               	.L11:
+ 214               	/* epilogue start */
+  34:ram_utils.c   **** 
+  35:ram_utils.c   **** 	/* return pointer to ram */
+  36:ram_utils.c   **** 	return heap_alloc;
+  37:ram_utils.c   **** }
+ 215               		.loc 1 37 0
+ 216 003c DF91      		pop r29
+ 217 003e CF91      		pop r28
+ 218               	.LVL13:
+ 219 0040 1F91      		pop r17
+ 220 0042 0F91      		pop r16
+ 221               	.LVL14:
+ 222 0044 0895      		ret
+ 223               		.cfi_endproc
+ 224               	.LFE7:
+ 226               		.section	.text.load_rom_string,"ax",@progbits
+ 227               	.global	load_rom_string
+ 229               	load_rom_string:
+ 230               	.LFB8:
+  38:ram_utils.c   **** 
+  39:ram_utils.c   **** unsigned char* load_rom_string(const unsigned char* source){
+ 231               		.loc 1 39 0
+ 232               		.cfi_startproc
+ 233               	.LVL15:
+ 234 0000 0F93      		push r16
+ 235               	.LCFI12:
+ 236               		.cfi_def_cfa_offset 3
+ 237               		.cfi_offset 16, -2
+ 238 0002 1F93      		push r17
+ 239               	.LCFI13:
+ 240               		.cfi_def_cfa_offset 4
+ 241               		.cfi_offset 17, -3
+ 242 0004 CF93      		push r28
+ 243               	.LCFI14:
+ 244               		.cfi_def_cfa_offset 5
+ 245               		.cfi_offset 28, -4
+ 246 0006 DF93      		push r29
+ 247               	.LCFI15:
+ 248               		.cfi_def_cfa_offset 6
+ 249               		.cfi_offset 29, -5
+ 250               	/* prologue: function */
+ 251               	/* frame size = 0 */
+ 252               	/* stack size = 4 */
+ 253               	.L__stack_usage = 4
+ 254 0008 8C01      		movw r16,r24
+ 255               	.LVL16:
+  40:ram_utils.c   **** 
+  41:ram_utils.c   **** 	/* quick & dirty strlen */
+  42:ram_utils.c   **** 	int len = 1;
+  43:ram_utils.c   **** 	const unsigned char* temp = source;
+  44:ram_utils.c   **** 	while( pgm_read_byte(&(*(temp++))) != '\0')
+ 256               		.loc 1 44 0
+ 257 000a FC01      		movw r30,r24
+  42:ram_utils.c   **** 	const unsigned char* temp = source;
+ 258               		.loc 1 42 0
+ 259 000c C1E0      		ldi r28,lo8(1)
+ 260 000e D0E0      		ldi r29,0
+ 261               	.LVL17:
+ 262               	.L17:
+ 263               	.LBB4:
+ 264               		.loc 1 44 0
+ 265               	/* #APP */
+ 266               	 ;  44 "ram_utils.c" 1
+ 267 0010 8491      		lpm r24, Z
+ 268               		
+ 269               	 ;  0 "" 2
+ 270               	.LVL18:
+ 271               	/* #NOAPP */
+ 272 0012 3196      		adiw r30,1
+ 273               	.LVL19:
+ 274               	.LBE4:
+ 275 0014 8823      		tst r24
+ 276 0016 01F0      		breq .L23
+  45:ram_utils.c   **** 		len++;
+ 277               		.loc 1 45 0
+ 278 0018 2196      		adiw r28,1
+ 279               	.LVL20:
+ 280 001a 00C0      		rjmp .L17
+ 281               	.LVL21:
+ 282               	.L23:
+  46:ram_utils.c   **** 
+  47:ram_utils.c   **** 	/* allocate memory */
+  48:ram_utils.c   **** 	unsigned char* heap_alloc = (unsigned char*)malloc(len);
+ 283               		.loc 1 48 0
+ 284 001c CE01      		movw r24,r28
+ 285               	.LVL22:
+ 286 001e 0E94 0000 		call malloc
+ 287               	.LVL23:
+ 288 0022 9C01      		movw r18,r24
+ 289               	.LVL24:
+  49:ram_utils.c   **** 
+  50:ram_utils.c   **** 	/* check we have heap space allocated */
+  51:ram_utils.c   **** 	if(heap_alloc == NULL)
+ 290               		.loc 1 51 0
+ 291 0024 0097      		sbiw r24,0
+ 292 0026 01F0      		breq .L21
+ 293 0028 DC01      		movw r26,r24
+ 294 002a 40E0      		ldi r20,0
+ 295 002c 50E0      		ldi r21,0
+ 296               	.L20:
+ 297               	.LVL25:
+ 298 002e F801      		movw r30,r16
+ 299 0030 E40F      		add r30,r20
+ 300 0032 F51F      		adc r31,r21
+ 301               	.LVL26:
+ 302               	.LBB5:
+ 303               	.LBB6:
+  52:ram_utils.c   **** 		return NULL;
+  53:ram_utils.c   **** 
+  54:ram_utils.c   **** 	/* copy bytes over */
+  55:ram_utils.c   **** 	for(int i=0;i<len;i++)
+  56:ram_utils.c   **** 		heap_alloc[i] = pgm_read_byte(&((source[i])));
+ 304               		.loc 1 56 0 discriminator 3
+ 305               	/* #APP */
+ 306               	 ;  56 "ram_utils.c" 1
+ 307 0034 E491      		lpm r30, Z
+ 308               		
+ 309               	 ;  0 "" 2
+ 310               	.LVL27:
+ 311               	/* #NOAPP */
+ 312               	.LBE6:
+ 313 0036 ED93      		st X+,r30
+  55:ram_utils.c   **** 		heap_alloc[i] = pgm_read_byte(&((source[i])));
+ 314               		.loc 1 55 0 discriminator 3
+ 315 0038 4F5F      		subi r20,-1
+ 316 003a 5F4F      		sbci r21,-1
+ 317               	.LVL28:
+ 318 003c 4C17      		cp r20,r28
+ 319 003e 5D07      		cpc r21,r29
+ 320 0040 01F4      		brne .L20
+ 321 0042 C901      		movw r24,r18
+ 322 0044 00C0      		rjmp .L19
+ 323               	.LVL29:
+ 324               	.L21:
+ 325               	.LBE5:
+  52:ram_utils.c   **** 		return NULL;
+ 326               		.loc 1 52 0
+ 327 0046 80E0      		ldi r24,0
+ 328 0048 90E0      		ldi r25,0
+ 329               	.L19:
+ 330               	/* epilogue start */
+  57:ram_utils.c   **** 
+  58:ram_utils.c   **** 	/* return pointer to ram */
+  59:ram_utils.c   **** 	return heap_alloc;
+  60:ram_utils.c   **** }
+ 331               		.loc 1 60 0
+ 332 004a DF91      		pop r29
+ 333 004c CF91      		pop r28
+ 334               	.LVL30:
+ 335 004e 1F91      		pop r17
+ 336 0050 0F91      		pop r16
+ 337               	.LVL31:
+ 338 0052 0895      		ret
+ 339               		.cfi_endproc
+ 340               	.LFE8:
+ 342               		.text
+ 343               	.Letext0:
+ 344               		.file 2 "/usr/local/Cellar/avr-gcc/4.9.3/lib/gcc/avr/4.9.3/include/stddef.h"
+ 345               		.file 3 "/usr/local/Cellar/avr-gcc/4.9.3/avr/include/stdint.h"
+ 346               		.file 4 "/usr/local/Cellar/avr-gcc/4.9.3/avr/include/stdlib.h"
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 ram_utils.c
+/var/folders/np/kp2qd6tj6gg2bqln_7wk9w6h0000gn/T//ccjiqTtx.s:2      *ABS*:000000000000003e __SP_H__
+/var/folders/np/kp2qd6tj6gg2bqln_7wk9w6h0000gn/T//ccjiqTtx.s:3      *ABS*:000000000000003d __SP_L__
+/var/folders/np/kp2qd6tj6gg2bqln_7wk9w6h0000gn/T//ccjiqTtx.s:4      *ABS*:000000000000003f __SREG__
+/var/folders/np/kp2qd6tj6gg2bqln_7wk9w6h0000gn/T//ccjiqTtx.s:5      *ABS*:0000000000000000 __tmp_reg__
+/var/folders/np/kp2qd6tj6gg2bqln_7wk9w6h0000gn/T//ccjiqTtx.s:6      *ABS*:0000000000000001 __zero_reg__
+/var/folders/np/kp2qd6tj6gg2bqln_7wk9w6h0000gn/T//ccjiqTtx.s:13     .text.estimate_alloc:0000000000000000 estimate_alloc
+/var/folders/np/kp2qd6tj6gg2bqln_7wk9w6h0000gn/T//ccjiqTtx.s:79     .text.estimate_ram:0000000000000000 estimate_ram
+/var/folders/np/kp2qd6tj6gg2bqln_7wk9w6h0000gn/T//ccjiqTtx.s:135    .text.load_rom_bitmap:0000000000000000 load_rom_bitmap
+/var/folders/np/kp2qd6tj6gg2bqln_7wk9w6h0000gn/T//ccjiqTtx.s:229    .text.load_rom_string:0000000000000000 load_rom_string
+
+UNDEFINED SYMBOLS
+__brkval
+__heap_start
+malloc

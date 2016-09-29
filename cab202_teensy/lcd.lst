@@ -1,0 +1,358 @@
+   1               		.file	"lcd.c"
+   2               	__SP_H__ = 0x3e
+   3               	__SP_L__ = 0x3d
+   4               	__SREG__ = 0x3f
+   5               	__tmp_reg__ = 0
+   6               	__zero_reg__ = 1
+   7               		.text
+   8               	.Ltext0:
+   9               		.cfi_sections	.debug_frame
+  10               		.section	.text.lcd_write,"ax",@progbits
+  11               	.global	lcd_write
+  13               	lcd_write:
+  14               	.LFB8:
+  15               		.file 1 "lcd.c"
+   1:lcd.c         **** /*
+   2:lcd.c         ****  *  CAB202 Teensy Library (cab202_teensy)
+   3:lcd.c         ****  *	lcd.c
+   4:lcd.c         ****  *
+   5:lcd.c         ****  *	Michael, 32/13/2015 12:34:56 AM
+   6:lcd.c         ****  *
+   7:lcd.c         ****  */
+   8:lcd.c         **** #include <avr/io.h>
+   9:lcd.c         **** #include <avr/pgmspace.h>
+  10:lcd.c         **** #include <util/delay.h>
+  11:lcd.c         **** 
+  12:lcd.c         **** #include "lcd.h"
+  13:lcd.c         **** #include "ascii_font.h"
+  14:lcd.c         **** #include "macros.h"
+  15:lcd.c         **** 
+  16:lcd.c         **** /*
+  17:lcd.c         ****  * Function implementations
+  18:lcd.c         ****  */
+  19:lcd.c         **** void lcd_init(unsigned char contrast) {
+  20:lcd.c         **** 	// Set up the pins connected to the LCD as outputs
+  21:lcd.c         **** 	SET_OUTPUT(DDRD, SCEPIN);
+  22:lcd.c         **** 	SET_OUTPUT(DDRB, RSTPIN);
+  23:lcd.c         **** 	SET_OUTPUT(DDRB, DCPIN);
+  24:lcd.c         **** 	SET_OUTPUT(DDRB, DINPIN);
+  25:lcd.c         **** 	SET_OUTPUT(DDRF, SCKPIN);
+  26:lcd.c         **** 
+  27:lcd.c         **** 	OUTPUT_LOW(PORTB, RSTPIN);
+  28:lcd.c         **** 	OUTPUT_HIGH(PORTD, SCEPIN);
+  29:lcd.c         **** 	OUTPUT_HIGH(PORTB, RSTPIN);
+  30:lcd.c         **** 
+  31:lcd.c         **** 	lcd_write(LCD_C, 0x21); // Enable LCD extended command set
+  32:lcd.c         **** 	lcd_write(LCD_C, 0x80 | contrast ); // Set LCD Vop (Contrast)
+  33:lcd.c         **** 	lcd_write(LCD_C, 0x04);
+  34:lcd.c         **** 	lcd_write(LCD_C, 0x13); // LCD bias mode 1:48
+  35:lcd.c         **** 
+  36:lcd.c         **** 	lcd_write(LCD_C, 0x0C); // LCD in normal mode.
+  37:lcd.c         ****   	lcd_write(LCD_C, 0x20); // Enable LCD basic command set
+  38:lcd.c         **** 	lcd_write(LCD_C, 0x0C);
+  39:lcd.c         **** 
+  40:lcd.c         **** 	lcd_write(LCD_C, 0x40); // Reset row to 0
+  41:lcd.c         **** 	lcd_write(LCD_C, 0x80); // Reset column to 0
+  42:lcd.c         **** }
+  43:lcd.c         **** 
+  44:lcd.c         **** void lcd_write(unsigned char dc, unsigned char data) {
+  16               		.loc 1 44 0
+  17               		.cfi_startproc
+  18               	.LVL0:
+  19               	/* prologue: function */
+  20               	/* frame size = 0 */
+  21               	/* stack size = 0 */
+  22               	.L__stack_usage = 0
+  45:lcd.c         **** 	// Set the DC pin based on the parameter 'dc' (Hint: use the OUTPUT_WRITE macro)
+  46:lcd.c         **** 	OUTPUT_WRITE(PORTB,DCPIN,dc);
+  23               		.loc 1 46 0
+  24 0000 25B1      		in r18,0x5
+  25 0002 30E2      		ldi r19,lo8(32)
+  26 0004 839F      		mul r24,r19
+  27 0006 C001      		movw r24,r0
+  28 0008 1124      		clr __zero_reg__
+  29               	.LVL1:
+  30 000a 2F7D      		andi r18,lo8(-33)
+  31 000c 822B      		or r24,r18
+  32 000e 85B9      		out 0x5,r24
+  47:lcd.c         **** 
+  48:lcd.c         **** 	// Pull the SCE/SS pin low to signal the LCD we have data
+  49:lcd.c         **** 	OUTPUT_LOW(PORTD,SCEPIN);
+  33               		.loc 1 49 0
+  34 0010 5F98      		cbi 0xb,7
+  35               	.LVL2:
+  36               	.LBB2:
+  50:lcd.c         **** 
+  51:lcd.c         **** 	// Write the byte of data using "bit bashing"
+  52:lcd.c         **** 	for(int i = 7; i >= 0; i--) {
+  37               		.loc 1 52 0
+  38 0012 87E0      		ldi r24,lo8(7)
+  39 0014 90E0      		ldi r25,0
+  53:lcd.c         **** 		OUTPUT_LOW(PORTF, SCKPIN) ;
+  54:lcd.c         **** 		if((data>>i) & (1 == 1)) {
+  40               		.loc 1 54 0
+  41 0016 70E0      		ldi r23,0
+  42               	.LVL3:
+  43               	.L4:
+  53:lcd.c         **** 		OUTPUT_LOW(PORTF, SCKPIN) ;
+  44               		.loc 1 53 0
+  45 0018 8F98      		cbi 0x11,7
+  46               		.loc 1 54 0
+  47 001a 9B01      		movw r18,r22
+  48 001c 082E      		mov r0,r24
+  49 001e 00C0      		rjmp 2f
+  50               		1:
+  51 0020 3595      		asr r19
+  52 0022 2795      		ror r18
+  53               		2:
+  54 0024 0A94      		dec r0
+  55 0026 02F4      		brpl 1b
+  56 0028 20FF      		sbrs r18,0
+  57 002a 00C0      		rjmp .L2
+  55:lcd.c         **** 			OUTPUT_HIGH(PORTB, DINPIN);
+  58               		.loc 1 55 0
+  59 002c 2E9A      		sbi 0x5,6
+  60 002e 00C0      		rjmp .L3
+  61               	.L2:
+  56:lcd.c         **** 		} else {
+  57:lcd.c         **** 			OUTPUT_LOW(PORTB, DINPIN);
+  62               		.loc 1 57 0
+  63 0030 2E98      		cbi 0x5,6
+  64               	.L3:
+  58:lcd.c         **** 		}
+  59:lcd.c         **** 		OUTPUT_HIGH(PORTF, SCKPIN);
+  65               		.loc 1 59 0 discriminator 2
+  66 0032 8F9A      		sbi 0x11,7
+  52:lcd.c         **** 		OUTPUT_LOW(PORTF, SCKPIN) ;
+  67               		.loc 1 52 0 discriminator 2
+  68               	.LVL4:
+  69 0034 0197      		sbiw r24,1
+  70 0036 00F4      		brcc .L4
+  71               	.LBE2:
+  60:lcd.c         **** 	}
+  61:lcd.c         **** 
+  62:lcd.c         **** 	// Pull SCE/SS high to signal the LCD we are done
+  63:lcd.c         **** 	OUTPUT_HIGH(PORTD,SCEPIN);
+  72               		.loc 1 63 0
+  73 0038 5F9A      		sbi 0xb,7
+  74 003a 0895      		ret
+  75               		.cfi_endproc
+  76               	.LFE8:
+  78               		.section	.text.lcd_init,"ax",@progbits
+  79               	.global	lcd_init
+  81               	lcd_init:
+  82               	.LFB7:
+  19:lcd.c         **** 	// Set up the pins connected to the LCD as outputs
+  83               		.loc 1 19 0
+  84               		.cfi_startproc
+  85               	.LVL5:
+  86 0000 CF93      		push r28
+  87               	.LCFI0:
+  88               		.cfi_def_cfa_offset 3
+  89               		.cfi_offset 28, -2
+  90               	/* prologue: function */
+  91               	/* frame size = 0 */
+  92               	/* stack size = 1 */
+  93               	.L__stack_usage = 1
+  94 0002 C82F      		mov r28,r24
+  21:lcd.c         **** 	SET_OUTPUT(DDRB, RSTPIN);
+  95               		.loc 1 21 0
+  96 0004 579A      		sbi 0xa,7
+  22:lcd.c         **** 	SET_OUTPUT(DDRB, DCPIN);
+  97               		.loc 1 22 0
+  98 0006 249A      		sbi 0x4,4
+  23:lcd.c         **** 	SET_OUTPUT(DDRB, DINPIN);
+  99               		.loc 1 23 0
+ 100 0008 259A      		sbi 0x4,5
+  24:lcd.c         **** 	SET_OUTPUT(DDRF, SCKPIN);
+ 101               		.loc 1 24 0
+ 102 000a 269A      		sbi 0x4,6
+  25:lcd.c         **** 
+ 103               		.loc 1 25 0
+ 104 000c 879A      		sbi 0x10,7
+  27:lcd.c         **** 	OUTPUT_HIGH(PORTD, SCEPIN);
+ 105               		.loc 1 27 0
+ 106 000e 2C98      		cbi 0x5,4
+  28:lcd.c         **** 	OUTPUT_HIGH(PORTB, RSTPIN);
+ 107               		.loc 1 28 0
+ 108 0010 5F9A      		sbi 0xb,7
+  29:lcd.c         **** 
+ 109               		.loc 1 29 0
+ 110 0012 2C9A      		sbi 0x5,4
+  31:lcd.c         **** 	lcd_write(LCD_C, 0x80 | contrast ); // Set LCD Vop (Contrast)
+ 111               		.loc 1 31 0
+ 112 0014 61E2      		ldi r22,lo8(33)
+ 113 0016 80E0      		ldi r24,0
+ 114               	.LVL6:
+ 115 0018 0E94 0000 		call lcd_write
+ 116               	.LVL7:
+  32:lcd.c         **** 	lcd_write(LCD_C, 0x04);
+ 117               		.loc 1 32 0
+ 118 001c 6C2F      		mov r22,r28
+ 119 001e 6068      		ori r22,lo8(-128)
+ 120 0020 80E0      		ldi r24,0
+ 121 0022 0E94 0000 		call lcd_write
+ 122               	.LVL8:
+  33:lcd.c         **** 	lcd_write(LCD_C, 0x13); // LCD bias mode 1:48
+ 123               		.loc 1 33 0
+ 124 0026 64E0      		ldi r22,lo8(4)
+ 125 0028 80E0      		ldi r24,0
+ 126 002a 0E94 0000 		call lcd_write
+ 127               	.LVL9:
+  34:lcd.c         **** 
+ 128               		.loc 1 34 0
+ 129 002e 63E1      		ldi r22,lo8(19)
+ 130 0030 80E0      		ldi r24,0
+ 131 0032 0E94 0000 		call lcd_write
+ 132               	.LVL10:
+  36:lcd.c         ****   	lcd_write(LCD_C, 0x20); // Enable LCD basic command set
+ 133               		.loc 1 36 0
+ 134 0036 6CE0      		ldi r22,lo8(12)
+ 135 0038 80E0      		ldi r24,0
+ 136 003a 0E94 0000 		call lcd_write
+ 137               	.LVL11:
+  37:lcd.c         **** 	lcd_write(LCD_C, 0x0C);
+ 138               		.loc 1 37 0
+ 139 003e 60E2      		ldi r22,lo8(32)
+ 140 0040 80E0      		ldi r24,0
+ 141 0042 0E94 0000 		call lcd_write
+ 142               	.LVL12:
+  38:lcd.c         **** 
+ 143               		.loc 1 38 0
+ 144 0046 6CE0      		ldi r22,lo8(12)
+ 145 0048 80E0      		ldi r24,0
+ 146 004a 0E94 0000 		call lcd_write
+ 147               	.LVL13:
+  40:lcd.c         **** 	lcd_write(LCD_C, 0x80); // Reset column to 0
+ 148               		.loc 1 40 0
+ 149 004e 60E4      		ldi r22,lo8(64)
+ 150 0050 80E0      		ldi r24,0
+ 151 0052 0E94 0000 		call lcd_write
+ 152               	.LVL14:
+  41:lcd.c         **** }
+ 153               		.loc 1 41 0
+ 154 0056 60E8      		ldi r22,lo8(-128)
+ 155 0058 80E0      		ldi r24,0
+ 156               	/* epilogue start */
+  42:lcd.c         **** 
+ 157               		.loc 1 42 0
+ 158 005a CF91      		pop r28
+ 159               	.LVL15:
+  41:lcd.c         **** }
+ 160               		.loc 1 41 0
+ 161 005c 0C94 0000 		jmp lcd_write
+ 162               	.LVL16:
+ 163               		.cfi_endproc
+ 164               	.LFE7:
+ 166               		.section	.text.lcd_clear,"ax",@progbits
+ 167               	.global	lcd_clear
+ 169               	lcd_clear:
+ 170               	.LFB9:
+  64:lcd.c         **** }
+  65:lcd.c         **** 
+  66:lcd.c         **** void lcd_clear(void) {
+ 171               		.loc 1 66 0
+ 172               		.cfi_startproc
+ 173 0000 CF93      		push r28
+ 174               	.LCFI1:
+ 175               		.cfi_def_cfa_offset 3
+ 176               		.cfi_offset 28, -2
+ 177 0002 DF93      		push r29
+ 178               	.LCFI2:
+ 179               		.cfi_def_cfa_offset 4
+ 180               		.cfi_offset 29, -3
+ 181               	/* prologue: function */
+ 182               	/* frame size = 0 */
+ 183               	/* stack size = 2 */
+ 184               	.L__stack_usage = 2
+ 185               	.LVL17:
+ 186               		.loc 1 66 0
+ 187 0004 C8EF      		ldi r28,lo8(-8)
+ 188 0006 D1E0      		ldi r29,lo8(1)
+ 189               	.LVL18:
+ 190               	.L9:
+ 191               	.LBB3:
+  67:lcd.c         **** 	// For each of the bytes on the screen, write an empty byte
+  68:lcd.c         **** 	// We don't need to start from the start: bonus question - why not?
+  69:lcd.c         **** 	for (int i = 0; i < LCD_X * LCD_Y / 8; i++) {
+  70:lcd.c         **** 		lcd_write(LCD_D, 0x00);
+ 192               		.loc 1 70 0 discriminator 3
+ 193 0008 60E0      		ldi r22,0
+ 194 000a 81E0      		ldi r24,lo8(1)
+ 195 000c 0E94 0000 		call lcd_write
+ 196               	.LVL19:
+ 197 0010 2197      		sbiw r28,1
+ 198               	.LVL20:
+  69:lcd.c         **** 		lcd_write(LCD_D, 0x00);
+ 199               		.loc 1 69 0 discriminator 3
+ 200 0012 01F4      		brne .L9
+ 201               	/* epilogue start */
+ 202               	.LBE3:
+  71:lcd.c         **** 	}
+  72:lcd.c         **** }
+ 203               		.loc 1 72 0
+ 204 0014 DF91      		pop r29
+ 205 0016 CF91      		pop r28
+ 206               	.LVL21:
+ 207 0018 0895      		ret
+ 208               		.cfi_endproc
+ 209               	.LFE9:
+ 211               		.section	.text.lcd_position,"ax",@progbits
+ 212               	.global	lcd_position
+ 214               	lcd_position:
+ 215               	.LFB10:
+  73:lcd.c         **** 
+  74:lcd.c         **** void lcd_position(unsigned char x, unsigned char y) {
+ 216               		.loc 1 74 0
+ 217               		.cfi_startproc
+ 218               	.LVL22:
+ 219 0000 CF93      		push r28
+ 220               	.LCFI3:
+ 221               		.cfi_def_cfa_offset 3
+ 222               		.cfi_offset 28, -2
+ 223               	/* prologue: function */
+ 224               	/* frame size = 0 */
+ 225               	/* stack size = 1 */
+ 226               	.L__stack_usage = 1
+ 227 0002 C82F      		mov r28,r24
+  75:lcd.c         **** 	lcd_write(LCD_C, (0x40 | y )); // Reset row to 0
+ 228               		.loc 1 75 0
+ 229 0004 6064      		ori r22,lo8(64)
+ 230               	.LVL23:
+ 231 0006 80E0      		ldi r24,0
+ 232               	.LVL24:
+ 233 0008 0E94 0000 		call lcd_write
+ 234               	.LVL25:
+  76:lcd.c         **** 	lcd_write(LCD_C, (0x80 | x )); // Reset column to 0
+ 235               		.loc 1 76 0
+ 236 000c 6C2F      		mov r22,r28
+ 237 000e 6068      		ori r22,lo8(-128)
+ 238 0010 80E0      		ldi r24,0
+ 239               	/* epilogue start */
+  77:lcd.c         **** }
+ 240               		.loc 1 77 0
+ 241 0012 CF91      		pop r28
+ 242               	.LVL26:
+  76:lcd.c         **** 	lcd_write(LCD_C, (0x80 | x )); // Reset column to 0
+ 243               		.loc 1 76 0
+ 244 0014 0C94 0000 		jmp lcd_write
+ 245               	.LVL27:
+ 246               		.cfi_endproc
+ 247               	.LFE10:
+ 249               		.text
+ 250               	.Letext0:
+ 251               		.file 2 "/usr/local/Cellar/avr-gcc/4.9.3/avr/include/stdint.h"
+ 252               		.file 3 "ascii_font.h"
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 lcd.c
+/var/folders/np/kp2qd6tj6gg2bqln_7wk9w6h0000gn/T//ccEHXlmq.s:2      *ABS*:000000000000003e __SP_H__
+/var/folders/np/kp2qd6tj6gg2bqln_7wk9w6h0000gn/T//ccEHXlmq.s:3      *ABS*:000000000000003d __SP_L__
+/var/folders/np/kp2qd6tj6gg2bqln_7wk9w6h0000gn/T//ccEHXlmq.s:4      *ABS*:000000000000003f __SREG__
+/var/folders/np/kp2qd6tj6gg2bqln_7wk9w6h0000gn/T//ccEHXlmq.s:5      *ABS*:0000000000000000 __tmp_reg__
+/var/folders/np/kp2qd6tj6gg2bqln_7wk9w6h0000gn/T//ccEHXlmq.s:6      *ABS*:0000000000000001 __zero_reg__
+/var/folders/np/kp2qd6tj6gg2bqln_7wk9w6h0000gn/T//ccEHXlmq.s:13     .text.lcd_write:0000000000000000 lcd_write
+/var/folders/np/kp2qd6tj6gg2bqln_7wk9w6h0000gn/T//ccEHXlmq.s:81     .text.lcd_init:0000000000000000 lcd_init
+/var/folders/np/kp2qd6tj6gg2bqln_7wk9w6h0000gn/T//ccEHXlmq.s:169    .text.lcd_clear:0000000000000000 lcd_clear
+/var/folders/np/kp2qd6tj6gg2bqln_7wk9w6h0000gn/T//ccEHXlmq.s:214    .text.lcd_position:0000000000000000 lcd_position
+
+NO UNDEFINED SYMBOLS
