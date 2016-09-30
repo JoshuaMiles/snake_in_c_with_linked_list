@@ -42,7 +42,7 @@ int sprite_collision(Sprite *sprite);
 void snake_controls();
 void ouroboros();
 int wall_collision(int x1, int y1, int x2, int y2);
-
+void snake_wait();
 //void eat_something(Sprite * snake_sprite);
 //void draw_snake_node(unsigned char top_left_x, unsigned char top_left_y);
 int self_collision();

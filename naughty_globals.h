@@ -12,7 +12,7 @@ int seed = 1;
 int score = 0;
 int lives = 5;
 int show_walls = 0;
-int snake_wait = 0;
+int SNAKE_WAIT = 0;
 
 
 struct Snake_node *head;

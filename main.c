@@ -146,7 +146,6 @@ void assign_data() {
 }
 
 void ouroboros() {
-    // detach tail and backup new tail
     struct Snake_node *new_tail = tail->previous;
     new_tail->next = NULL;
     tail->previous = NULL;
@@ -168,7 +167,9 @@ void ouroboros() {
 
 void head_direction() {
 //    Up
+
     if (INPUT_READ(PIND, 1)) {
+        SNAKE_WAIT = 0;
         head->dx = 0;
         head->dy = -3;
         OUTPUT_HIGH(PORTB, 2); // LED0 ON
@@ -176,6 +177,7 @@ void head_direction() {
     }
         // Check if Left is Pressed
     else if (INPUT_READ(PINB, 1)) {
+        SNAKE_WAIT = 0;
         head->dy = 0;
         head->dx = -3;
         OUTPUT_HIGH(PORTB, 2); // LED0 ON
@@ -183,7 +185,7 @@ void head_direction() {
     }
         // Check if Down is Pressed
     else if (INPUT_READ(PINB, 7)) {
-        _delay_ms(100);
+        SNAKE_WAIT = 0;
         head->dx = 0;
         head->dy = 3;
 
@@ -192,6 +194,7 @@ void head_direction() {
     }
         // Check if Right is Pressed
     else if (INPUT_READ(PIND, 0)) {
+        SNAKE_WAIT = 0;
         _delay_ms(100);
         head->dy = 0;
         head->dx = 3;
@@ -205,6 +208,7 @@ void head_direction() {
         PORTB ^= (1 << 3);
         PORTB ^= (1 << 2);
     } else {
+        handle_wrap();
         OUTPUT_LOW(PORTB, 3);
         OUTPUT_LOW(PORTB, 2);
     }
@@ -266,11 +270,6 @@ void snake_maker() {
     tail = (struct Snake_node *) malloc(sizeof(struct Snake_node));
 }
 
-//TODO line collisions
-//int snake_collision() {
-//    return 0;
-//}
-//
 void reset_snake() {
     struct Snake_node *current_node = head->next;
     free(head);
@@ -283,16 +282,10 @@ void reset_snake() {
         }
     }
 }
-//
-//void snake_direction() {
-//
-//}
-//
 //// TODO Get Potentiometer (ADC)
 //void snake_speed() {
 //
 //}
-// TODO free all of the memory allocated and than remalloc the snake
 
 void eat_food(Sprite *food) {
     struct Snake_node *old_head = head;
@@ -317,13 +310,10 @@ void draw_snake_node(unsigned char top_left_x, unsigned char top_left_y) {
 
 void snake_loses_life() {
     lives--;
-    //TODO Reset position
     reset_snake();
     snake_maker();
     assign_data();
-    //TODO Every time the snake loses a life, its length is reset to 2 sprites and appears like it did at the beginning ofthegamewaitingfortheplayertomovetheSW1switch.[
-    OUTPUT_HIGH(PORTB, 3);
-    snake_wait = 1;
+    SNAKE_WAIT = 1;
 }
 
 void draw_snek() {
@@ -351,9 +341,15 @@ ___________               .___   ___ ___                    .___.__
 
 
 void food_shifter(Sprite *food_sprite) {
-    //TODO make sure it doesn't spawn inside of the snake and or the letters at the top left
-    food_sprite->x = rand() % LCD_X;
-    food_sprite->y = rand() % LCD_Y;
+    int new_food_x = rand() % LCD_X - 3;
+    int new_food_y = rand() % LCD_Y - 3;
+
+    if(new_food_y > 4 && new_food_x > 30 ){
+        food_sprite->x = rand() % LCD_X;
+        food_sprite->y = rand() % LCD_Y;
+    } else {
+        food_shifter(food_sprite);
+    }
 }
 
 
@@ -433,7 +429,10 @@ void handle_game() {
         build_hud();
         update_random_seed();
 
-        ouroboros();
+
+        if(SNAKE_WAIT != 1){
+            ouroboros();
+        }
 
         head_direction();
 
@@ -451,27 +450,18 @@ void handle_game() {
 
         if (show_walls) {
             build_a_wall();
-            if (wall_collision(LCD_X * 0.75, 0, LCD_X * 0.75, LCD_Y / 4) || wall_collision(LCD_X / 2, LCD_Y * 0.75, LCD_X / 2, LCD_Y) || wall_collision(0, LCD_Y / 4, LCD_X / 2, LCD_Y / 4) ) {
+            if (wall_collision(LCD_X * 0.75, 0, LCD_X * 0.75, LCD_Y / 4) ||
+                wall_collision(LCD_X / 2, LCD_Y * 0.75, LCD_X / 2, LCD_Y) ||
+                wall_collision(0, LCD_Y / 4, LCD_X / 2, LCD_Y / 4)) {
                 snake_loses_life();
             }
         }
 
 
-        while (snake_wait == 1){
-            if (INPUT_READ(PINB, 0)) {
-                score += 9;
-                eat_food(&food_sprite);
-            }
-            snake_wait = 0;
-        }
-
         if (self_collision()) {
             snake_loses_life();
-            snake_wait = 1;
         }
-        /*
-         * Testing method
-         */
+
 
         if (sprite_collision(&food_sprite)) {
             eat_food(&food_sprite);
