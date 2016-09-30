@@ -11,6 +11,9 @@ byte length = 10;
 int seed = 1;
 int score = 0;
 int lives = 5;
+int show_walls = 0;
+int snake_wait = 0;
+
 
 struct Snake_node *head;
 
@@ -28,5 +31,23 @@ static byte snake_byte [] = {
         BYTE( 11100000 )
 };
 
+//static byte wall1 [] = {
+//        BYTE( 11100000 ),
+//        BYTE( 11100000 ),
+//        BYTE( 11100000 )
+//};
+//
+//
+//static byte wall2 [] = {
+//        BYTE( 11100000 ),
+//        BYTE( 11100000 ),
+//        BYTE( 11100000 )
+//};
+//
+//static byte wall3 [] = {
+//        BYTE( 11100000 ),
+//        BYTE( 11100000 ),
+//        BYTE( 11100000 )
+//};
 
 //byte *bitmaps[3] = { food  };

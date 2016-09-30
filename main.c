@@ -22,6 +22,10 @@ void setup_inputs_and_outputs() {
     SET_INPUT(DDRB, 7);
     SET_INPUT(DDRD, 0);
     SET_INPUT(DDRB, 0);
+    // Right switch
+    SET_INPUT(DDRF, 5);
+    // Left Switch
+    SET_INPUT(DDRF, 6);
 
     SET_OUTPUT(DDRB, 2);
     SET_OUTPUT(DDRB, 3);
@@ -58,8 +62,8 @@ void setup_inputs_and_outputs() {
 
 void build_hud() {
     if (score > 9) {
-        draw_char(0,0,score/10 + '0');
-        draw_char(6,0,score%10 + '0');
+        draw_char(0, 0, score / 10 + '0');
+        draw_char(6, 0, score % 10 + '0');
     } else {
         draw_char(0, 0, score + '0');
     }
@@ -141,7 +145,7 @@ void assign_data() {
 
 }
 
-void snake_reformer() {
+void ouroboros() {
     // detach tail and backup new tail
     struct Snake_node *new_tail = tail->previous;
     new_tail->next = NULL;
@@ -168,12 +172,14 @@ void head_direction() {
         head->dx = 0;
         head->dy = -3;
         OUTPUT_HIGH(PORTB, 2); // LED0 ON
+        handle_wrap();
     }
         // Check if Left is Pressed
     else if (INPUT_READ(PINB, 1)) {
         head->dy = 0;
         head->dx = -3;
         OUTPUT_HIGH(PORTB, 2); // LED0 ON
+        handle_wrap();
     }
         // Check if Down is Pressed
     else if (INPUT_READ(PINB, 7)) {
@@ -182,6 +188,7 @@ void head_direction() {
         head->dy = 3;
 
         OUTPUT_HIGH(PORTB, 3);  // LED1 ON
+        handle_wrap();
     }
         // Check if Right is Pressed
     else if (INPUT_READ(PIND, 0)) {
@@ -190,6 +197,7 @@ void head_direction() {
         head->dx = 3;
 
         OUTPUT_HIGH(PORTB, 3);  // LED1 ON
+        handle_wrap();
     }
         // Check if Center is Pressed
     else if (INPUT_READ(PINB, 0)) {
@@ -199,7 +207,6 @@ void head_direction() {
     } else {
         OUTPUT_LOW(PORTB, 3);
         OUTPUT_LOW(PORTB, 2);
-
     }
 }
 
@@ -264,9 +271,18 @@ void snake_maker() {
 //    return 0;
 //}
 //
-//void reset_snake(Sprite *snake) {
-//
-//}
+void reset_snake() {
+    struct Snake_node *current_node = head->next;
+    free(head);
+    while (1) {
+        if (current_node->next != NULL) {
+            current_node = current_node->next;
+            free(current_node);
+        } else {
+            break;
+        }
+    }
+}
 //
 //void snake_direction() {
 //
@@ -299,6 +315,17 @@ void draw_snake_node(unsigned char top_left_x, unsigned char top_left_y) {
     }
 }
 
+void snake_loses_life() {
+    lives--;
+    //TODO Reset position
+    reset_snake();
+    snake_maker();
+    assign_data();
+    //TODO Every time the snake loses a life, its length is reset to 2 sprites and appears like it did at the beginning ofthegamewaitingfortheplayertomovetheSW1switch.[
+    OUTPUT_HIGH(PORTB, 3);
+    snake_wait = 1;
+}
+
 void draw_snek() {
     struct Snake_node *current_node = head;
 
@@ -311,21 +338,6 @@ void draw_snek() {
         }
     }
 }
-
-//void build_snake(Sprite *snake) {
-//    init_sprite(&snake_sprite, (LCD_X - 3) / 2, (LCD_Y - 3) / 2, 3, 3, snake);
-//}
-
-
-// TODO make sure to deallocate (free) the memory
-
-//void move_snek(struct snake_node, int dy, int dx) {
-//    snake_node += snake_node->dy;
-//    snake_node += snake_node->dx;
-//}
-
-
-
 
 /*
 ___________               .___   ___ ___                    .___.__
@@ -364,15 +376,6 @@ int sprite_collision(Sprite *sprite) {
     );
 }
 
-
-//void make_food() {
-//    const int width = 3;
-//    const int height = sizeof(food) / 2;
-//
-//    init_sprite(&food_sprite, (LCD_X - width) / 2, (LCD_Y - height) / 2, width, height, food);
-//}
-
-
 /**
  __      __        .__  .__      ___ ___                    .___.__
 /  \    /  \_____  |  | |  |    /   |   \_____    ____    __| _/|  |   ___________  ______
@@ -384,6 +387,32 @@ int sprite_collision(Sprite *sprite) {
 
 void build_a_wall() {
 
+    draw_line(LCD_X * 0.75, 0, LCD_X * 0.75, LCD_Y / 4);
+
+    draw_line(LCD_X / 2, LCD_Y * 0.75, LCD_X / 2, LCD_Y);
+
+    draw_line(0, LCD_Y / 4, LCD_X / 2, LCD_Y / 4);
+
+
+}
+
+int wall_collision(int x1, int y1, int x2, int y2) {
+    int line_top = y1,
+            line_bottom = 1,
+            line_left = x1,
+            line_right = y2;
+
+    int head_top = head->y,
+            head_bottom = head_top + 2,
+            head_left = head->x,
+            head_right = head_left + 2;
+
+    return !(
+            line_bottom < head_top
+            || line_top > head_bottom
+            || line_right < head_left
+            || line_left > head_right
+    );
 }
 
 
@@ -398,13 +427,13 @@ void handle_game() {
     show_screen();
     assign_data();
     init_sprite(&food_sprite, (float) food_location_x, (float) food_location_y, 3, 3, food);
-    while (score>0) {
+    while (lives > 0) {
 
         clear_screen();
         build_hud();
         update_random_seed();
 
-        snake_reformer();
+        ouroboros();
 
         head_direction();
 
@@ -412,21 +441,44 @@ void handle_game() {
 //        food_shifter(&food_sprite);
         draw_sprite(&food_sprite);
         draw_snek(&head);
+
+        if (INPUT_READ(PINF, 5)) {
+            show_walls = 0;
+        }
+        if (INPUT_READ(PINF, 6)) {
+            show_walls = 1;
+        }
+
+        if (show_walls) {
+            build_a_wall();
+            if (wall_collision(LCD_X * 0.75, 0, LCD_X * 0.75, LCD_Y / 4) || wall_collision(LCD_X / 2, LCD_Y * 0.75, LCD_X / 2, LCD_Y) || wall_collision(0, LCD_Y / 4, LCD_X / 2, LCD_Y / 4) ) {
+                snake_loses_life();
+            }
+        }
+
+
+        while (snake_wait == 1){
+            if (INPUT_READ(PINB, 0)) {
+                score += 9;
+                eat_food(&food_sprite);
+            }
+            snake_wait = 0;
+        }
+
         if (self_collision()) {
-            score--;
-            //TODO Every time the snake loses a life, its length is reset to 2 sprites and appears like it did at the beginning ofthegamewaitingfortheplayertomovetheSW1switch.[
-            OUTPUT_HIGH(PORTB, 3);
+            snake_loses_life();
+            snake_wait = 1;
         }
         /*
          * Testing method
          */
-        if (INPUT_READ(PINB, 0)) {
-            score += 9;
-//            eat_food(&food_sprite);
-        }
+
         if (sprite_collision(&food_sprite)) {
             eat_food(&food_sprite);
             food_shifter(&food_sprite);
+            if (show_walls) {
+                score += 2;
+            }
             score++;
             PORTB ^= (1 << 3);
             PORTB ^= (1 << 2);
@@ -438,7 +490,7 @@ void handle_game() {
         OUTPUT_LOW(PORTC, 7);
     }
     clear_screen();
-    draw_string((LCD_X / 2) - 5, LCD_Y / 2, "Game Over");
+    draw_string((LCD_X / 2) - 5, LCD_Y / 2 - 4, "Game Over");
     show_screen();
 }
 
