@@ -33,8 +33,8 @@ void lcd_init(unsigned char contrast) {
 	lcd_write(LCD_C, 0x04);
 	lcd_write(LCD_C, 0x13); // LCD bias mode 1:48
 
-	lcd_write(LCD_C, 0x0C); // LCD in normal mode.
-  	lcd_write(LCD_C, 0x20); // Enable LCD basic command set
+	lcd_write(LCD_C, 0x0C);	// LCD in normal mode.
+	lcd_write(LCD_C, 0x20); // Enable LCD basic command set
 	lcd_write(LCD_C, 0x0C);
 
 	lcd_write(LCD_C, 0x40); // Reset row to 0

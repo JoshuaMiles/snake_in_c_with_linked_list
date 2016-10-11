@@ -6,9 +6,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <avr/io.h>
+
+#include <avr/io.h>
+#include <avr/interrupt.h>
 #include <util/delay.h>
 #include <math.h>
 #include <time.h>
+
 
 #include "naughty_globals.h"
 
@@ -43,6 +47,8 @@ void snake_controls();
 void ouroboros();
 int wall_collision(int x1, int y1, int x2, int y2);
 void snake_wait();
+void eat_food(Sprite *food);
+void reset_snake();
 //void eat_something(Sprite * snake_sprite);
 //void draw_snake_node(unsigned char top_left_x, unsigned char top_left_y);
 int self_collision();

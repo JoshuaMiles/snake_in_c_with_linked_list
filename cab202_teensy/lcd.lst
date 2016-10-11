@@ -345,14 +345,14 @@
  252               		.file 3 "ascii_font.h"
 DEFINED SYMBOLS
                             *ABS*:0000000000000000 lcd.c
-/var/folders/np/kp2qd6tj6gg2bqln_7wk9w6h0000gn/T//ccEHXlmq.s:2      *ABS*:000000000000003e __SP_H__
-/var/folders/np/kp2qd6tj6gg2bqln_7wk9w6h0000gn/T//ccEHXlmq.s:3      *ABS*:000000000000003d __SP_L__
-/var/folders/np/kp2qd6tj6gg2bqln_7wk9w6h0000gn/T//ccEHXlmq.s:4      *ABS*:000000000000003f __SREG__
-/var/folders/np/kp2qd6tj6gg2bqln_7wk9w6h0000gn/T//ccEHXlmq.s:5      *ABS*:0000000000000000 __tmp_reg__
-/var/folders/np/kp2qd6tj6gg2bqln_7wk9w6h0000gn/T//ccEHXlmq.s:6      *ABS*:0000000000000001 __zero_reg__
-/var/folders/np/kp2qd6tj6gg2bqln_7wk9w6h0000gn/T//ccEHXlmq.s:13     .text.lcd_write:0000000000000000 lcd_write
-/var/folders/np/kp2qd6tj6gg2bqln_7wk9w6h0000gn/T//ccEHXlmq.s:81     .text.lcd_init:0000000000000000 lcd_init
-/var/folders/np/kp2qd6tj6gg2bqln_7wk9w6h0000gn/T//ccEHXlmq.s:169    .text.lcd_clear:0000000000000000 lcd_clear
-/var/folders/np/kp2qd6tj6gg2bqln_7wk9w6h0000gn/T//ccEHXlmq.s:214    .text.lcd_position:0000000000000000 lcd_position
+/var/folders/np/kp2qd6tj6gg2bqln_7wk9w6h0000gn/T//ccMVOpUX.s:2      *ABS*:000000000000003e __SP_H__
+/var/folders/np/kp2qd6tj6gg2bqln_7wk9w6h0000gn/T//ccMVOpUX.s:3      *ABS*:000000000000003d __SP_L__
+/var/folders/np/kp2qd6tj6gg2bqln_7wk9w6h0000gn/T//ccMVOpUX.s:4      *ABS*:000000000000003f __SREG__
+/var/folders/np/kp2qd6tj6gg2bqln_7wk9w6h0000gn/T//ccMVOpUX.s:5      *ABS*:0000000000000000 __tmp_reg__
+/var/folders/np/kp2qd6tj6gg2bqln_7wk9w6h0000gn/T//ccMVOpUX.s:6      *ABS*:0000000000000001 __zero_reg__
+/var/folders/np/kp2qd6tj6gg2bqln_7wk9w6h0000gn/T//ccMVOpUX.s:13     .text.lcd_write:0000000000000000 lcd_write
+/var/folders/np/kp2qd6tj6gg2bqln_7wk9w6h0000gn/T//ccMVOpUX.s:81     .text.lcd_init:0000000000000000 lcd_init
+/var/folders/np/kp2qd6tj6gg2bqln_7wk9w6h0000gn/T//ccMVOpUX.s:169    .text.lcd_clear:0000000000000000 lcd_clear
+/var/folders/np/kp2qd6tj6gg2bqln_7wk9w6h0000gn/T//ccMVOpUX.s:214    .text.lcd_position:0000000000000000 lcd_position
 
 NO UNDEFINED SYMBOLS

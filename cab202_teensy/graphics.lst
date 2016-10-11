@@ -1961,20 +1961,20 @@
  1797               		.file 4 "lcd.h"
 DEFINED SYMBOLS
                             *ABS*:0000000000000000 graphics.c
-/var/folders/np/kp2qd6tj6gg2bqln_7wk9w6h0000gn/T//ccbZotGO.s:2      *ABS*:000000000000003e __SP_H__
-/var/folders/np/kp2qd6tj6gg2bqln_7wk9w6h0000gn/T//ccbZotGO.s:3      *ABS*:000000000000003d __SP_L__
-/var/folders/np/kp2qd6tj6gg2bqln_7wk9w6h0000gn/T//ccbZotGO.s:4      *ABS*:000000000000003f __SREG__
-/var/folders/np/kp2qd6tj6gg2bqln_7wk9w6h0000gn/T//ccbZotGO.s:5      *ABS*:0000000000000000 __tmp_reg__
-/var/folders/np/kp2qd6tj6gg2bqln_7wk9w6h0000gn/T//ccbZotGO.s:6      *ABS*:0000000000000001 __zero_reg__
-/var/folders/np/kp2qd6tj6gg2bqln_7wk9w6h0000gn/T//ccbZotGO.s:13     .text.show_screen:0000000000000000 show_screen
+/var/folders/np/kp2qd6tj6gg2bqln_7wk9w6h0000gn/T//ccwuVMST.s:2      *ABS*:000000000000003e __SP_H__
+/var/folders/np/kp2qd6tj6gg2bqln_7wk9w6h0000gn/T//ccwuVMST.s:3      *ABS*:000000000000003d __SP_L__
+/var/folders/np/kp2qd6tj6gg2bqln_7wk9w6h0000gn/T//ccwuVMST.s:4      *ABS*:000000000000003f __SREG__
+/var/folders/np/kp2qd6tj6gg2bqln_7wk9w6h0000gn/T//ccwuVMST.s:5      *ABS*:0000000000000000 __tmp_reg__
+/var/folders/np/kp2qd6tj6gg2bqln_7wk9w6h0000gn/T//ccwuVMST.s:6      *ABS*:0000000000000001 __zero_reg__
+/var/folders/np/kp2qd6tj6gg2bqln_7wk9w6h0000gn/T//ccwuVMST.s:13     .text.show_screen:0000000000000000 show_screen
                             *COM*:00000000000001f8 screen_buffer
-/var/folders/np/kp2qd6tj6gg2bqln_7wk9w6h0000gn/T//ccbZotGO.s:62     .text.clear_screen:0000000000000000 clear_screen
-/var/folders/np/kp2qd6tj6gg2bqln_7wk9w6h0000gn/T//ccbZotGO.s:92     .text.set_pixel:0000000000000000 set_pixel
-/var/folders/np/kp2qd6tj6gg2bqln_7wk9w6h0000gn/T//ccbZotGO.s:176    .text.draw_line:0000000000000000 draw_line
-/var/folders/np/kp2qd6tj6gg2bqln_7wk9w6h0000gn/T//ccbZotGO.s:654    .text.draw_char:0000000000000000 draw_char
-/var/folders/np/kp2qd6tj6gg2bqln_7wk9w6h0000gn/T//ccbZotGO.s:1312   .progmem.data:0000000000000000 ASCII
-/var/folders/np/kp2qd6tj6gg2bqln_7wk9w6h0000gn/T//ccbZotGO.s:836    .text.draw_int:0000000000000000 draw_int
-/var/folders/np/kp2qd6tj6gg2bqln_7wk9w6h0000gn/T//ccbZotGO.s:1249   .text.draw_string:0000000000000000 draw_string
+/var/folders/np/kp2qd6tj6gg2bqln_7wk9w6h0000gn/T//ccwuVMST.s:62     .text.clear_screen:0000000000000000 clear_screen
+/var/folders/np/kp2qd6tj6gg2bqln_7wk9w6h0000gn/T//ccwuVMST.s:92     .text.set_pixel:0000000000000000 set_pixel
+/var/folders/np/kp2qd6tj6gg2bqln_7wk9w6h0000gn/T//ccwuVMST.s:176    .text.draw_line:0000000000000000 draw_line
+/var/folders/np/kp2qd6tj6gg2bqln_7wk9w6h0000gn/T//ccwuVMST.s:654    .text.draw_char:0000000000000000 draw_char
+/var/folders/np/kp2qd6tj6gg2bqln_7wk9w6h0000gn/T//ccwuVMST.s:1312   .progmem.data:0000000000000000 ASCII
+/var/folders/np/kp2qd6tj6gg2bqln_7wk9w6h0000gn/T//ccwuVMST.s:836    .text.draw_int:0000000000000000 draw_int
+/var/folders/np/kp2qd6tj6gg2bqln_7wk9w6h0000gn/T//ccwuVMST.s:1249   .text.draw_string:0000000000000000 draw_string
 
 UNDEFINED SYMBOLS
 lcd_position

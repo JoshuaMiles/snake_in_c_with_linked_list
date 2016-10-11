@@ -464,13 +464,13 @@
  415               		.file 5 "graphics.h"
 DEFINED SYMBOLS
                             *ABS*:0000000000000000 sprite.c
-/var/folders/np/kp2qd6tj6gg2bqln_7wk9w6h0000gn/T//ccRqaiGN.s:2      *ABS*:000000000000003e __SP_H__
-/var/folders/np/kp2qd6tj6gg2bqln_7wk9w6h0000gn/T//ccRqaiGN.s:3      *ABS*:000000000000003d __SP_L__
-/var/folders/np/kp2qd6tj6gg2bqln_7wk9w6h0000gn/T//ccRqaiGN.s:4      *ABS*:000000000000003f __SREG__
-/var/folders/np/kp2qd6tj6gg2bqln_7wk9w6h0000gn/T//ccRqaiGN.s:5      *ABS*:0000000000000000 __tmp_reg__
-/var/folders/np/kp2qd6tj6gg2bqln_7wk9w6h0000gn/T//ccRqaiGN.s:6      *ABS*:0000000000000001 __zero_reg__
-/var/folders/np/kp2qd6tj6gg2bqln_7wk9w6h0000gn/T//ccRqaiGN.s:14     .text.init_sprite:0000000000000000 init_sprite
-/var/folders/np/kp2qd6tj6gg2bqln_7wk9w6h0000gn/T//ccRqaiGN.s:134    .text.draw_sprite:0000000000000000 draw_sprite
+/var/folders/np/kp2qd6tj6gg2bqln_7wk9w6h0000gn/T//ccQ29BMm.s:2      *ABS*:000000000000003e __SP_H__
+/var/folders/np/kp2qd6tj6gg2bqln_7wk9w6h0000gn/T//ccQ29BMm.s:3      *ABS*:000000000000003d __SP_L__
+/var/folders/np/kp2qd6tj6gg2bqln_7wk9w6h0000gn/T//ccQ29BMm.s:4      *ABS*:000000000000003f __SREG__
+/var/folders/np/kp2qd6tj6gg2bqln_7wk9w6h0000gn/T//ccQ29BMm.s:5      *ABS*:0000000000000000 __tmp_reg__
+/var/folders/np/kp2qd6tj6gg2bqln_7wk9w6h0000gn/T//ccQ29BMm.s:6      *ABS*:0000000000000001 __zero_reg__
+/var/folders/np/kp2qd6tj6gg2bqln_7wk9w6h0000gn/T//ccQ29BMm.s:14     .text.init_sprite:0000000000000000 init_sprite
+/var/folders/np/kp2qd6tj6gg2bqln_7wk9w6h0000gn/T//ccQ29BMm.s:134    .text.draw_sprite:0000000000000000 draw_sprite
 
 UNDEFINED SYMBOLS
 __floatunsisf

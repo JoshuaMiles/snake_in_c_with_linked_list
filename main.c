@@ -2,9 +2,10 @@
 // Created by Joshua on 21/09/2016.
 //
 
-
-
 #include "main.h"
+
+#define LTHRES 500
+#define RTHRES 500
 
 
 /**
@@ -16,7 +17,46 @@
         \/                 \/          \/         \/
  */
 
+
+
+
+
+void adc_init() {
+    // AREF = AVcc
+    ADMUX = (1 << REFS0);
+
+    // ADC Enable and pre-scaler of 128
+    // 8000000/128 = 62500
+    ADCSRA = (1 << ADEN) | (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0);
+}
+
+
+uint16_t adc_read(uint8_t ch) {
+    // select the corresponding channel 0~7
+    // ANDing with '7' will always keep the value
+    // of 'ch' between 0 and 7
+    ch &= 0b00000111;  // AND operation with 7
+    ADMUX = (ADMUX & 0xF8) | ch;     // clears the bottom 3 bits before ORing
+
+    // start single conversion
+    // write '1' to ADSC
+    ADCSRA |= (1 << ADSC);
+
+    // wait for conversion to complete
+    // ADSC becomes '0' again
+    // till then, run loop continuously
+    while (ADCSRA & (1 << ADSC));
+
+    return (ADC);
+}
+
+
 void setup_inputs_and_outputs() {
+
+    DDRD |= (1 << PIND6);//|(1<<PINB3);	//Teensy LEDLED0 and LED1 as outputs
+    PORTD = 0x00;    // Turn everything off to start with
+
+
     SET_INPUT(DDRD, 1);
     SET_INPUT(DDRB, 1);
     SET_INPUT(DDRB, 7);
@@ -26,29 +66,17 @@ void setup_inputs_and_outputs() {
     SET_INPUT(DDRF, 5);
     // Left Switch
     SET_INPUT(DDRF, 6);
+    // ADC
+//    SET_INPUT(ADCSRA, 6);
+
 
     SET_OUTPUT(DDRB, 2);
     SET_OUTPUT(DDRB, 3);
 
     //Back light
     SET_OUTPUT(DDRC, 7);
+
 };
-
-
-/**
- * While the user is pressing a switch, don't do anything an than wait
- */
-//void debounce(int p, int pin){
-//    _delay_ms(50);
-//    if() {
-//
-//        while(pin >> p & 0b1);
-//    }
-//    _delay_ms(50);
-//}
-//
-
-
 
 
 /*
@@ -65,9 +93,14 @@ void build_hud() {
         draw_char(0, 0, score / 10 + '0');
         draw_char(6, 0, score % 10 + '0');
     } else {
-        draw_char(0, 0, score + '0');
+        draw_char(0, 0, max_speed + '0');
+//        itoa(max_speed, int_buffer, 10);
+//        sprintf(disp_buffer,"Current Speed %s",int_buffer);
+//        draw_string(0,0,disp_buffer);
+//        draw_char(0, 0, score + '0');
     }
     draw_char(15, 0, '(');
+
     draw_char(20, 0, lives + '0');
     draw_char(26, 0, ')');
 };
@@ -83,10 +116,11 @@ void build_hud() {
 
 void name_and_student_number() {
     clear_screen();
-    draw_string(0, 0, "Joshua Miles");
-    draw_string(0, 7, "n7176244");
+    draw_string(LCD_X/2 - 29, LCD_Y/2 - 8, "Joshua Miles");
+    draw_string(LCD_X/2 - 20, LCD_Y/2 + 9, "n7176244");
     show_screen();
-    //TODO turn this delay back on when handing in
+
+//TODO
 //    _delay_ms(2000);
     clear_screen();
     lcd_clear();
@@ -156,7 +190,6 @@ void ouroboros() {
     tail->dx = head->dx;
     tail->dy = head->dy;
 
-
     tail->next = head;
     head->previous = tail;
 
@@ -169,38 +202,56 @@ void head_direction() {
 //    Up
 
     if (INPUT_READ(PIND, 1)) {
-        SNAKE_WAIT = 0;
-        head->dx = 0;
-        head->dy = -3;
-        OUTPUT_HIGH(PORTB, 2); // LED0 ON
-        handle_wrap();
+        if (head->dy == 3) {
+                snake_loses_life();
+            } else {
+            SNAKE_WAIT = 0;
+            head->dx = 0;
+            head->dy = -3;
+            OUTPUT_HIGH(PORTB, 2); // LED0 ON
+            handle_wrap();
+        }
     }
         // Check if Left is Pressed
     else if (INPUT_READ(PINB, 1)) {
-        SNAKE_WAIT = 0;
-        head->dy = 0;
-        head->dx = -3;
-        OUTPUT_HIGH(PORTB, 2); // LED0 ON
-        handle_wrap();
+        if (head->dx == 3) {
+            snake_loses_life();
+        } else {
+
+            SNAKE_WAIT = 0;
+            head->dy = 0;
+            head->dx = -3;
+            OUTPUT_HIGH(PORTB, 2); // LED0 ON
+            handle_wrap();
+        }
     }
         // Check if Down is Pressed
     else if (INPUT_READ(PINB, 7)) {
-        SNAKE_WAIT = 0;
-        head->dx = 0;
-        head->dy = 3;
+        if (head->dy == -3) {
+            snake_loses_life();
+        } else {
+            SNAKE_WAIT = 0;
+            head->dx = 0;
+            head->dy = 3;
 
-        OUTPUT_HIGH(PORTB, 3);  // LED1 ON
-        handle_wrap();
+            OUTPUT_HIGH(PORTB, 3);  // LED1 ON
+            handle_wrap();
+        }
     }
         // Check if Right is Pressed
     else if (INPUT_READ(PIND, 0)) {
-        SNAKE_WAIT = 0;
-        _delay_ms(100);
-        head->dy = 0;
-        head->dx = 3;
+        if (head->dx == -3) {
+            snake_loses_life();
+        } else {
+
+            SNAKE_WAIT = 0;
+//            _delay_ms(100);
+            head->dy = 0;
+            head->dx = 3;
+            handle_wrap();
+        }
 
         OUTPUT_HIGH(PORTB, 3);  // LED1 ON
-        handle_wrap();
     }
         // Check if Center is Pressed
     else if (INPUT_READ(PINB, 0)) {
@@ -214,7 +265,6 @@ void head_direction() {
     }
 }
 
-//TODO doesn't wrap around when off screen and changed positions
 void handle_wrap() {
     if (head->y < 0) {
         head->y = LCD_Y;
@@ -227,6 +277,30 @@ void handle_wrap() {
     }
 }
 
+// Collisions
+
+
+
+void handle_collisions(Sprite *sprite) {
+
+    if (self_collision()) {
+        snake_loses_life();
+    }
+
+
+    if (sprite_collision(sprite)) {
+        eat_food(sprite);
+        food_shifter(sprite);
+        if (show_walls) {
+            score += 2;
+        }
+        score++;
+        PORTB ^= (1 << 3);
+        PORTB ^= (1 << 2);
+        OUTPUT_HIGH(PORTC, 7);
+    }
+
+}
 
 int self_collision() {
 
@@ -282,10 +356,15 @@ void reset_snake() {
         }
     }
 }
-//// TODO Get Potentiometer (ADC)
-//void snake_speed() {
-//
-//}
+
+void snake_speed() {
+    adc_result0 = adc_read(0);
+    // conversion of adc value to position values
+    float max_adc = (float) CPU_4MHz;
+//        long max_lcd_adc = (adc_result1*(long)(LCD_X-5)) / max_adc;
+    max_speed = (float) adc_result0 / max_adc;
+//    set_clock_speed(max_speed);
+}
 
 void eat_food(Sprite *food) {
     struct Snake_node *old_head = head;
@@ -344,7 +423,7 @@ void food_shifter(Sprite *food_sprite) {
     int new_food_x = rand() % LCD_X - 3;
     int new_food_y = rand() % LCD_Y - 3;
 
-    if(new_food_y > 4 && new_food_x > 30 ){
+    if (new_food_y > 4 && new_food_x > 30) {
         food_sprite->x = rand() % LCD_X;
         food_sprite->y = rand() % LCD_Y;
     } else {
@@ -381,16 +460,11 @@ int sprite_collision(Sprite *sprite) {
        \/        \/                   \/      \/     \/      \/           \/           \/
  */
 
-void build_a_wall() {
-
-    draw_line(LCD_X * 0.75, 0, LCD_X * 0.75, LCD_Y / 4);
-
-    draw_line(LCD_X / 2, LCD_Y * 0.75, LCD_X / 2, LCD_Y);
-
-    draw_line(0, LCD_Y / 4, LCD_X / 2, LCD_Y / 4);
 
 
-}
+
+
+
 
 int wall_collision(int x1, int y1, int x2, int y2) {
     int line_top = y1,
@@ -413,9 +487,12 @@ int wall_collision(int x1, int y1, int x2, int y2) {
 
 
 void handle_game() {
+
     Sprite food_sprite;
+    Sprite wall1;
+    Sprite wall2;
+    Sprite wall3;
     snake_maker();
-//    time_t now;
 
     int food_location_x = rand() % LCD_X;
     int food_location_y = rand() % LCD_Y;
@@ -423,22 +500,29 @@ void handle_game() {
     show_screen();
     assign_data();
     init_sprite(&food_sprite, (float) food_location_x, (float) food_location_y, 3, 3, food);
-    while (lives > 0) {
+    init_sprite(&wall1, LCD_X * 0.75, 0, 1, 12, byte_wall1);
+    init_sprite(&wall2, LCD_X / 2, LCD_Y - 12, 1, 12, byte_wall1);
+    init_sprite(&wall3, LCD_X / 3, LCD_Y - 12, 1, 12, byte_wall1);
 
+
+    adc_init();
+
+    while (lives > 0) {
+            snake_speed();
+                set_clock_speed(max_speed);
         clear_screen();
         build_hud();
         update_random_seed();
 
-
-        if(SNAKE_WAIT != 1){
+        if (SNAKE_WAIT != 1) {
             ouroboros();
         }
 
         head_direction();
-
         handle_wrap();
-//        food_shifter(&food_sprite);
+        handle_collisions(&food_sprite);
         draw_sprite(&food_sprite);
+
         draw_snek(&head);
 
         if (INPUT_READ(PINF, 5)) {
@@ -448,37 +532,23 @@ void handle_game() {
             show_walls = 1;
         }
 
+
         if (show_walls) {
-            build_a_wall();
-            if (wall_collision(LCD_X * 0.75, 0, LCD_X * 0.75, LCD_Y / 4) ||
-                wall_collision(LCD_X / 2, LCD_Y * 0.75, LCD_X / 2, LCD_Y) ||
-                wall_collision(0, LCD_Y / 4, LCD_X / 2, LCD_Y / 4)) {
+
+            draw_sprite(&wall1);
+            draw_sprite(&wall2);
+            draw_sprite(&wall3);
+
+            if (sprite_collision(&wall1) || sprite_collision(&wall2) || sprite_collision(&wall3)) {
                 snake_loses_life();
             }
         }
-
-
-        if (self_collision()) {
-            snake_loses_life();
-        }
-
-
-        if (sprite_collision(&food_sprite)) {
-            eat_food(&food_sprite);
-            food_shifter(&food_sprite);
-            if (show_walls) {
-                score += 2;
-            }
-            score++;
-            PORTB ^= (1 << 3);
-            PORTB ^= (1 << 2);
-            OUTPUT_HIGH(PORTC, 7);
-        }
-
         show_screen();
-        _delay_ms(75);
+
         OUTPUT_LOW(PORTC, 7);
     }
+
+    _delay_ms(75);
     clear_screen();
     draw_string((LCD_X / 2) - 5, LCD_Y / 2 - 4, "Game Over");
     show_screen();
@@ -496,8 +566,10 @@ void handle_game() {
 
 
 int main() {
-            set_clock_speed(CPU_8MHz);
+
+//            set_clock_speed(CPU_4MHz);
     lcd_init(LCD_DEFAULT_CONTRAST);
+
     name_and_student_number();
     handle_game();
 
