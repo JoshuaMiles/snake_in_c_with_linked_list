@@ -11,20 +11,19 @@
 #include <avr/interrupt.h>
 #include <util/delay.h>
 #include <math.h>
-#include <time.h>
 
 
-#include "naughty_globals.h"
+#include "./naughty_globals.h"
 
-#include "./cab202_teensy/graphics.h"
+#include "../cab202_teensy/graphics.h"
 
-#include "./cab202_teensy/cpu_speed.h"
+#include "../cab202_teensy/cpu_speed.h"
 
-#include "./cab202_teensy/sprite.h"
+#include "../cab202_teensy/sprite.h"
 
-#include "./cab202_teensy/ascii_font.h"
+#include "../cab202_teensy/ascii_font.h"
 
-#include "./cab202_teensy/macros.h"
+#include "../cab202_teensy/macros.h"
 
 
 #include <util/delay.h>

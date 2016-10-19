@@ -7,7 +7,7 @@
 #
 
 # Modify these
-SRC=main
+SRC=a2_n7176244
 
 CAB202_LIB_DIR=./cab202_teensy
 

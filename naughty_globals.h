@@ -1,4 +1,5 @@
-#include "byte.h"
+#include "./byte.h"
+
 
 
 static byte food [] = {
@@ -14,8 +15,7 @@ int score = 0;
 int lives = 5;
 int show_walls = 0;
 int SNAKE_WAIT = 0;
-int speed = 1;
-float max_speed = 0x02;
+int max_speed = 3;
 
 // For adc
 uint16_t  adc_result0;

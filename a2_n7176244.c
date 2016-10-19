@@ -2,7 +2,7 @@
 // Created by Joshua on 21/09/2016.
 //
 
-#include "main.h"
+#include "./a2_n7176244.h"
 
 #define LTHRES 500
 #define RTHRES 500
@@ -16,9 +16,6 @@
 \____|__  /\___/    |____|_  / /_______  //_______  /  |____|  |______/  |____|
         \/                 \/          \/         \/
  */
-
-
-
 
 
 void adc_init() {
